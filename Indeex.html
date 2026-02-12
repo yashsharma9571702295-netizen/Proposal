@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Will You Be Mine?</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --glass-bg: rgba(255,255,255,0.25);
+  --glass-border: rgba(255,255,255,0.35);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family: "Inter", sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  background: linear-gradient(135deg, #ffd1dc, #e6d9ff);
+}
+
+/* Floating hearts background */
+.heart-bg{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+.float-heart{
+  position:absolute;
+  bottom:-40px;
+  font-size:18px;
+  opacity:0.6;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp{
+  from{
+    transform: translateY(0) translateX(0) scale(0.8);
+    opacity:0;
+  }
+  10%{opacity:0.7;}
+  to{
+    transform: translateY(-110vh) translateX(30px) scale(1.2);
+    opacity:0;
+  }
+}
+
+/* Main glass card */
+.card{
+  position:relative;
+  z-index:2;
+  width:min(92vw, 420px);
+  padding:32px 26px;
+  border-radius:26px;
+  background:var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border:1px solid var(--glass-border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  text-align:center;
+  transition: all 0.4s ease;
+}
+
+h1{
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  margin-bottom:24px;
+  color:#5a2a6f;
+}
+
+p{
+  font-size:1rem;
+  color:#5c3a63;
+  line-height:1.5;
+}
+
+.big{
+  font-size: clamp(1.6rem, 5vw, 2.1rem);
+}
+
+.huge{
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(2.2rem, 6.5vw, 3.1rem);
+  margin-bottom:12px;
+  color:#a12a6f;
+}
+
+/* Buttons */
+.buttons{
+  margin-top:26px;
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  padding:12px 22px;
+  border-radius:999px;
+  font-size:1rem;
+  cursor:pointer;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  box-shadow:0 10px 18px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 22px rgba(0,0,0,0.18);
+}
+
+.yes-btn{
+  background: linear-gradient(135deg,#ff9acb,#ffc3e2);
+  color:#5a0f3b;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse{
+  0%{ transform:scale(1); box-shadow:0 0 0 0 rgba(255,105,180,0.5);}
+  70%{ transform:scale(1.05); box-shadow:0 0 0 12px rgba(255,105,180,0);}
+  100%{ transform:scale(1); }
+}
+
+/* Confetti hearts */
+.confetti{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:5;
+}
+
+.confetti-heart{
+  position:absolute;
+  font-size:18px;
+  animation: burst 1.6s ease-out forwards;
+}
+
+@keyframes burst{
+  from{
+    transform: translate(0,0) scale(0.5);
+    opacity:1;
+  }
+  to{
+    transform: translate(var(--x), var(--y)) rotate(360deg) scale(1.4);
+    opacity:0;
+  }
+}
+
+/* Small devices spacing tweak */
+@media(max-width:480px){
+  .card{
+    padding:26px 18px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="heart-bg" id="heartBg"></div>
+
+<div class="card" id="card"></div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+const card = document.getElementById("card");
+const confettiLayer = document.getElementById("confetti");
+
+/* ---------------- Background hearts ---------------- */
+const bg = document.getElementById("heartBg");
+
+function spawnFloatingHeart(){
+  const h = document.createElement("div");
+  h.className = "float-heart";
+  h.textContent = "💗";
+  h.style.left = Math.random()*100 + "vw";
+  h.style.fontSize = 14 + Math.random()*18 + "px";
+  h.style.animationDuration = 8 + Math.random()*8 + "s";
+  bg.appendChild(h);
+  setTimeout(()=>h.remove(),16000);
+}
+
+setInterval(spawnFloatingHeart, 700);
+
+/* ---------------- Phases ---------------- */
+
+function renderQuestion(){
+  card.innerHTML = `
+    <h1>Will you be mine?</h1>
+    <div class="buttons">
+      <button class="yes-btn" id="yesBtn">Yes 💖</button>
+      <button id="noBtn">No 🙈</button>
+    </div>
+  `;
+
+  document.getElementById("yesBtn").addEventListener("click", renderYes);
+  document.getElementById("noBtn").addEventListener("click", renderNo);
+}
+
+function renderNo(){
+  card.innerHTML = `
+    <p class="big">Buddhu... Choose him! 🙄</p>
+    <p style="margin-top:10px;">He loves you more than anyone else. ❤️</p>
+    <div class="buttons">
+      <button id="backBtn">Go Back 🔙</button>
+    </div>
+  `;
+
+  document.getElementById("backBtn").addEventListener("click", renderQuestion);
+}
+
+function renderYes(){
+  launchConfetti();
+
+  card.innerHTML = `
+    <div class="huge">YAYYYYY! You made the right decision! 💖✨🥰</div>
+    <p class="big">Now... Hug me! 🤗🫂✨</p>
+  `;
+}
+
+/* ---------------- Confetti hearts ---------------- */
+
+function launchConfetti(){
+  const count = 60;
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+
+  for(let i=0;i<count;i++){
+    const el = document.createElement("div");
+    el.className = "confetti-heart";
+    el.textContent = ["💖","💗","✨","🥰","💘"][Math.floor(Math.random()*5)];
+
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 80 + Math.random()*220;
+
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+
+    el.style.left = cx + "px";
+    el.style.top = cy + "px";
+    el.style.setProperty("--x", x + "px");
+    el.style.setProperty("--y", y + "px");
+    el.style.fontSize = 14 + Math.random()*16 + "px";
+
+    confettiLayer.appendChild(el);
+
+    setTimeout(()=>el.remove(),1600);
+  }
+}
+
+/* Init */
+renderQuestion();
+</script>
+</body>
+</html>
+```
